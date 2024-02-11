@@ -9,8 +9,8 @@ from django.http import JsonResponse
 import json
 from power_consumption_app.models import data
 
-ACCESS_ID = "e7fj9w4knyan95qkkusm"
-ACCESS_KEY = "707fc8ae8bad41718a648f4378973b5c"
+ACCESS_ID = "xxxx"
+ACCESS_KEY = "xxxx"
 API_ENDPOINT = "https://openapi.tuyaeu.com"
 
 file_path = 'C:/Users/Naf_Second/Downloads/407/monday/cur_power_data.csv'
