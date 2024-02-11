@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Voltage Graph</title>
+    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #chartContainer {
+            width: 80%;
+            max-width: 800px;
+            height: 500px;
+            margin: auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <script>
+        window.onload = function () {
+
+            var dps = [];
+            var chart = new CanvasJS.Chart("chartContainer", {
+                title: {
+                    text: "Voltage Data"
+                },
+                data: [{
+                    type: "line",
+                    dataPoints: dps
+                }]
+            });
+
+            var x_data = {{ x_data | safe }}; // Parse JSON data passed from Django
+            var y_data = {{ y_data | safe }};
+            var xVal = 0;
+            var yVal = 0;
+            var updateInterval = 100;
+            var dataLength = 10;
+            var temp = 0;
+            var zVal = 0;
+            var fxval = x_data.length;
+            
+            var updateChart = function (count) {
+                count = count || 1;
+                  
+                for (var j = 0; j < count; j++) {
+                    yVal = y_data[temp];
+                    
+
+                    dps.push({
+                        x: temp,
+                        y: yVal
+                    });
+                    
+                    temp += 1;
+                    zVal += count;
+
+                    if (temp < fxval) {
+                        chart.render()
+                        return;
+                    }
+                }
+
+
+
+            };
+
+
+            updateChart(dataLength);
+
+            setInterval(function () {
+                updateChart()
+            }, updateInterval);
+
+
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <div id="chartContainer"></div>
+
+</body>
+
+</html>

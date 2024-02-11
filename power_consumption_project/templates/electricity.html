@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title> Electricity Graph </title>
+    <script>
+        window.onload = function () {
+
+            var dps = [];
+            var chart = new CanvasJS.Chart("chartContainer", {
+                title: {
+                    text: "Electricity Data"
+                },
+                data: [{
+                    type: "line",
+                    dataPoints: dps
+                }]
+            });
+
+            var x_data = {{ x_data_json | safe }}; // Parse JSON data passed from Django
+            var y_data = {{ y_data | safe }};
+            var xVal = 0;
+            var yVal = 0;
+            var updateInterval = 100;
+            var dataLength = 10;
+            var temp = 0;
+            var cnt = 0
+            var zVal = 0;
+            var fxval = x_data.length;
+            var updateChart = function (count) {
+                count = count || 1;
+
+                for (var j = 0; j < count; j++) {
+                    yVal = y_data[zVal];
+                    dps.push({
+                        x: xVal,
+                        y: yVal
+                    });
+                    xVal++;
+                    temp += 1;
+                    zVal+=count;
+
+                    if(temp<fxval){
+                chart.render()
+                return;
+                }
+                }
+
+                
+               
+                
+            };
+
+            
+            updateChart(dataLength);
+            
+            setInterval(function () {
+                updateChart()
+            }, updateInterval);
+       
+
+        }
+    </script>
+</head>
+
+<body style="background-color: #f0f0f0;">
+
+    <div id="chartContainer" style="height: 500px; width: 100%;"></div>
+    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+</body>
+
+</html>

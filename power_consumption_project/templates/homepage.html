@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dashboard</title>
+    <!-- Plotly CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        
+        .dashboard-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .dashboard-info p {
+            margin: 10px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .dashboard-info p:first-child {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            background-color: mediumturquoise;
+        }
+        .status{
+            text-align: center;
+            border: 20px;
+            color: rgb(27, 63, 94);
+            
+        }
+        
+        p {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+        .night-mode {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .night-mode .dashboard-info,
+        .night-mode .dashboard-info p,
+        .night-mode .graph-container,
+        .night-mode h1.status
+        {
+            background-color: #222;
+            color: #fff;
+        }
+
+        /* Night Mode Button */
+        .night-mode-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .graph-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .plotly-graph {
+            width: 40%; /* Set width for each graph */
+            height: 300px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .plotly-graph:hover {
+            transform: scale(1.10);
+        }
+
+        .plotly-graph2 {
+            margin-left: 400px;
+            margin-top: 20px;
+            width: 40%;
+            height: 400px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .plotly-graph2:hover {
+            transform: scale(1.02);
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px; /* Adjust margin as needed */
+            margin-left: 100px;
+        }
+
+        .btn1 {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #ccc; /* Button background color */
+            color: #333; /* Button text color */
+        }
+        .btn2 {
+            margin-left: 650px;
+            justify-content: space-between;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #ccc; /* Button background color */
+            color: #333; /* Button text color */
+        }
+        .btn3 {
+            margin-top: 10px; /* Adjust as needed */
+            margin-left: 600px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #ccc; /* Button background color */
+            color: #333; /* Button text color */
+        }
+
+    </style>
+</head>
+
+<body>
+    <button class="night-mode-btn" onclick="toggleNightMode()">Night Mode</button>
+    <h1 class="status"><u>Status Dashboard </u></h1>
+    
+    <div class="dashboard-info">
+        <p>Total Power consumed: {{energy}} Wh</p>
+        <p>Total Cost: {{total_cost}} Taka only </p>
+        <p>Total Voltage consumed: {{total_voltage}} V</p>
+        <p>Total Current consumed: {{total_current}} mA</p>
+    </div>
+
+    <!-- First Plotly Graph -->
+    <!-- First Plotly Graph -->
+    <div class="graph-container">
+        <div class="plotly-graph" id="plotly-graph1"></div>
+        <div class="plotly-graph" id="plotly-graph2"></div>
+    </div>
+    <div class="button-container">
+
+        <a href="voltage" target="_blank"><button class="btn1">Dynamic Voltage Graph</button></a>
+        <a href="power" target="_blank"><button class="btn2">Dynamic Power Consumption Graph </button>  </a>
+    </div>
+
+
+    <div class="plotly-graph2" id="plotly-graph3"></div>
+     <a href="elec_con" target="_blank"><button class="btn3">Dynamic Current Graph</button> </a><!-- Button for Graph 3 -->
+    
+    <script>
+        function toggleNightMode() {
+            const body = document.body;
+            body.classList.toggle('night-mode');
+        }
+        // Sample data for graphs
+        var xData1 = {{ x_data | safe }};
+        var yData1 = {{ y_data | safe }};
+        var hoverText = {{ hover_text | safe }};
+
+        var xData2 = {{ x_data | safe }};
+        var yData2 = {{ b_data | safe }};
+        var hoverText2 = {{ hover_text2 | safe }};
+
+        var xData3 = {{ x_data | safe }};
+        var yData3 = {{ a_data | safe }};
+        var hoverText3 = {{ hover_text3 | safe }};
+
+        // First Plotly graph
+        var plotData1 = [{
+            x: xData1,
+            y: yData1,
+            mode: 'lines+markers',
+            text: hoverText,
+            type: 'scatter'
+        }];
+
+        var layout1 = {
+            title: 'Time vs Voltage',
+            xaxis: {
+                title: 'TimeStamp'
+            },
+            yaxis: {
+                title: 'Voltage'
+            }
+        };
+
+        Plotly.newPlot('plotly-graph1', plotData1, layout1);
+
+        // Second Plotly graph
+        var plotData2 = [{
+            x: xData2,
+            y: yData2,
+            mode: 'lines+markers',
+            text: hoverText2,
+            type: 'scatter'
+        }];
+
+        var layout2 = {
+            title: 'Time vs Electricity Consumption',
+            xaxis: {
+                title: 'TimeStamp',
+            },
+            yaxis: {
+                title: 'Power',
+                range: [0, 0.4]
+            }
+        };
+
+        Plotly.newPlot('plotly-graph2', plotData2, layout2);
+
+        // Third Plotly graph
+        var plotData3 = [{
+            x: xData3,
+            y: yData3,
+            mode: 'lines+markers',
+            text: hoverText3,
+            type: 'scatter'
+        }];
+
+        var layout3 = {
+            title: 'Time vs Current',
+            xaxis: {
+                title: 'TimeStamp',
+            },
+            yaxis: {
+                title: 'Current',
+                range: [0, 400]
+            }
+        };
+
+        Plotly.newPlot('plotly-graph3', plotData3, layout3);
+        
+    </script>
+
+</body>
+
+</html>
