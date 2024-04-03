@@ -148,7 +148,7 @@
 <body>
     <button class="night-mode-btn" onclick="toggleNightMode()">Night Mode</button>
     <h1 class="status"><u>Status Dashboard </u></h1>
-    
+    <button><a href="{% url 'data' %}">Click here to import new data</a></button>
     <div class="dashboard-info">
         <p>Total Power consumed: {{energy}} Wh</p>
         <p>Total Cost: {{total_cost}} Taka only </p>
