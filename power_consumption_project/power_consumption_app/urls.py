@@ -8,4 +8,5 @@ urlpatterns = [
     path('',views.home,name='home'),
     path('database/',views.database,name = 'database'),
     path('query/', views.query, name='query'),
+    path('save_data',views.import_data, name='data'),
 ]
