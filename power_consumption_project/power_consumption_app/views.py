@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 import csv
 import plotly.graph_objs as go
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from tuya_connector import TuyaOpenAPI
 import datetime
 from .models import data
@@ -13,8 +13,27 @@ ACCESS_ID = "xxxx"
 ACCESS_KEY = "xxxx"
 API_ENDPOINT = "https://openapi.tuyaeu.com"
 
-file_path = 'C:/Users/Naf_Second/Downloads/407/monday/cur_power_data.csv'
+file_path = 'C:/Users/Naf_Second/Desktop/power_consumption_project/cur_power_data.csv'
 
+def import_data(request):
+    power = []
+    voltage = []
+    current = []
+    electricity = []
+    timestamp = []
+    with open(file_path, 'r') as file:
+        csv_reader = csv.DictReader(file)
+        for row in csv_reader:
+            timestamp.append(row['TimeStamp'])
+            current.append(float(row['Current Current']))
+            voltage.append(float(row['Current Voltage']))
+            electricity.append(float(row['Energy Consumption']))
+            power.append(float(row['Current Power']))   
+    length = len(power)
+    for i in range(length):
+        instance =  data(power=power[i],voltage=voltage[i],current=current[i],electricity=electricity[i],timestamp=timestamp[i])
+        instance.save()
+    return HttpResponse("Button clicked!")
 
 def power(request):
     x_data = []
@@ -125,18 +144,12 @@ def home(request):
 
 
 def database(request):
-    rows_to_delete = []
+     data.objects.filter(power__gt=0.0).delete()
 
-    datas = data.objects.all()
+     return HttpResponse("Data deleted successfully!")
 
-    for m in datas:
-        if m.power == '0':
-            rows_to_delete.append(m)
 
-    for row in rows_to_delete:
-        row.delete()
 
-    return HttpResponse("Complete")
 
 def query(request):
      datas = data.objects.all()  # Retrieve all Album objects from the database
@@ -163,8 +176,7 @@ def get_power_data2(request):
         voltage = currentvoltage['value']
         consumption = currentconsumption['value']
 
-        # Constructing the absolute path to the CSV file
-        # Replace with the absolute path
+
 
         # Save data to database
         datas = data(
